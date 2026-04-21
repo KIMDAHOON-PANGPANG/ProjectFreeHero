@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "unreal-handshake": {
+      "type": "stdio",
+      "command": "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/ThirdParty/Python3/Win64/python.exe",
+      "args": [
+        "C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Marketplace/Ultimate02ff2941960bV101/Content/Python/extensions/unreal-handshake/__init__.py",
+        "--server-name",
+        "unreal-handshake"
+      ]
+    }
+  }
+}
