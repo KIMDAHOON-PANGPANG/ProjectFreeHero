@@ -3,7 +3,7 @@
 > **상태**: 리서치 완료, CP2 결정 대기
 > **작성일**: 2026-04-22
 > **세션 브랜치**: `claude/interesting-clarke-b07ec3` (worktree)
-> **연결 Plan**: `C:\Users\김다훈\.claude\plans\ultimate-engine-sleepy-cook.md`
+> **연결 Plan**: `.claude/plans/ultimate-engine-sleepy-cook.md` (repo 내 사본). 원본 위치는 Claude Code `/plans/` 디렉터리.
 > **대상 프로젝트**: ProjectFreeHero (UE 5.7, BP-only 정책 적용 중)
 
 ---
@@ -210,7 +210,7 @@ Script/
 
 ### 9.1 환경 복구
 - [ ] git pull 최신 브랜치
-- [ ] `C:\Users\김다훈\.claude\plans\ultimate-engine-sleepy-cook.md` 읽기 (원본 Plan)
+- [ ] `.claude/plans/ultimate-engine-sleepy-cook.md` 읽기 (repo 사본 Plan)
 - [ ] 본 문서 (`docs/research/angelscript-ue57-feasibility.md`) 읽기
 - [ ] `production/session-state/active.md` 있으면 읽기 (없으면 이 문서가 대체)
 
@@ -283,7 +283,8 @@ Script/
 - [Hazelight EmmsUI](https://github.com/Hazelight/EmmsUI) — Angelscript용 immediate mode UMG
 
 ### 내부 참조
-- Plan 원본: `C:\Users\김다훈\.claude\plans\ultimate-engine-sleepy-cook.md`
+- Plan 원본: Claude Code `/plans/` 디렉터리 (사용자 홈)
+- Plan repo 사본: `.claude/plans/ultimate-engine-sleepy-cook.md`
 - 본 worktree: `C:\Dev\ProjectFreeHero\.claude\worktrees\interesting-clarke-b07ec3`
 - MCP 설정: `.mcp.json` (UBG unreal-handshake 서버 포함)
 
