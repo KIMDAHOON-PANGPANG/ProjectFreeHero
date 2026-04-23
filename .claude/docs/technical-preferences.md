@@ -48,7 +48,7 @@
 
 ## 금지 패턴
 
-- **사용자 C++ 작성 금지** — `Source/` 디렉터리 생성·사용 금지. 시스템 레이어는 Angelscript, 콘텐츠는 BP. 플러그인 C++ 빌드는 예외(UBG, Angelscript 런타임)
+- **게임 로직 C++ 금지** — 시스템 레이어는 Angelscript, 콘텐츠는 BP. `Source/` 는 **빌드 인프라 보일러플레이트 전용**(Target.cs, Build.cs, IMPLEMENT_PRIMARY_GAME_MODULE — 수정 금지). 플러그인 C++ 빌드도 예외(UBG, Angelscript 런타임)
 - **Blueprint/Angelscript 내 하드코딩된 게임플레이 값** — `DataAsset`, `PrimaryDataAsset`, `DataTable` 사용
 - **예산 없는 Tick 사용** — Timers, Timeline, 이벤트 기반 패턴 선호
 - **핫 패스에서 Pawn 하위 클래스로의 하드 캐스트** — 하드 레퍼런스 유발, 로딩 느려짐

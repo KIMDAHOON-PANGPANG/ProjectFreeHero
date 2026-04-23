@@ -11,7 +11,13 @@ ProjectFreeHero/
 │   ├── Core/                    # UObject/Component 상속 (HealthComponent 등)
 │   ├── Gameplay/                # 게임플레이 시스템 (어빌리티, 어트리뷰트)
 │   └── UI/                      # Widget helper 로직
-├── Source/                      # ❌ 사용자 C++ 금지 (플러그인 C++는 Plugins/*/Source/ 에 격리)
+├── Source/                      # ⚠️ 빌드 인프라 보일러플레이트 전용 (게임 로직 C++ 금지)
+│   ├── ProjectFreeHero.Target.cs        # Game 타겟 (수정 금지)
+│   ├── ProjectFreeHeroEditor.Target.cs  # Editor 타겟 (수정 금지)
+│   └── ProjectFreeHero/                 # 기본 모듈 (비어있음, 게임 로직은 Script/ + Content/)
+│       ├── ProjectFreeHero.Build.cs
+│       ├── ProjectFreeHero.cpp          # IMPLEMENT_PRIMARY_GAME_MODULE (수정 금지)
+│       └── ProjectFreeHero.h
 ├── Plugins/                     # 마켓플레이스 / 로컬 플러그인
 │   ├── Angelscript/             # UnrealEngine-Angelscript-ZH (커뮤니티 UE 5.7 플러그인)
 │   └── BpGeneratorUltimate/     # UBG (로컬 배치 시)
@@ -31,8 +37,10 @@ ProjectFreeHero/
 - **BP + Angelscript 이중 레이어**:
   - **콘텐츠/튜닝**은 `Content/` 내 `.uasset` Blueprint (바이너리, BP diff 도구 사용)
   - **시스템 레이어**는 `Script/` 내 `.as` Angelscript (텍스트, 일반 diff/리뷰 가능)
-  - 사용자 C++ 금지. `Source/` 생성 금지. `.claude/rules/` 의 `src/gameplay/**` 룰은
-    본 프로젝트에서 `Content/Blueprints/Gameplay/**` + `Script/Gameplay/**` 로 매핑.
+  - **게임 로직 C++ 금지**. `Source/` 는 **빌드 인프라 보일러플레이트 전용**(타겟/모듈 선언 5개 파일, 수정 금지).
+    Angelscript 플러그인 C++ 빌드에 필수로 요구되며, 게임 로직은 여기에 추가하지 않습니다.
+  - `.claude/rules/` 의 `src/gameplay/**` 룰은 본 프로젝트에서
+    `Content/Blueprints/Gameplay/**` + `Script/Gameplay/**` 로 매핑.
 - **기본 gitignore**: `Binaries/`, `Intermediate/`, `Saved/`,
   `DerivedDataCache/`, `.vs/` — 이미 `.gitignore`에 포함되어 있습니다.
 - **UBG 통합**: Ultimate Engine CoPilot은 Unreal Editor 내부에서 Claude Code를

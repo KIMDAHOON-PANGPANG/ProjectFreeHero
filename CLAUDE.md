@@ -6,7 +6,7 @@
 ## 기술 스택
 
 - **엔진**: Unreal Engine 5.7 (2025-11 고정, 문서 검증일 2026-02-13)
-- **언어**: **Blueprint + Angelscript** — 사용자 게임 코드에서 C++ 작성 금지. 플러그인 C++(UBG, Angelscript 런타임)의 빌드는 예외. Angelscript는 `UnrealEngine-Angelscript-ZH/AngelscriptProject` 커뮤니티 플러그인 기반, `Script/` 디렉터리 하위에서 UObject/Component/AttributeSet 상속이 가능
+- **언어**: **Blueprint + Angelscript** — 게임 로직 C++ 작성 금지. 플러그인 C++(UBG, Angelscript 런타임) 빌드는 예외이며, `Source/` 는 빌드 인프라 보일러플레이트(Target.cs, Build.cs, IMPLEMENT_PRIMARY_GAME_MODULE) 전용으로만 유지. Angelscript는 `UnrealEngine-Angelscript-ZH/AngelscriptProject` 커뮤니티 플러그인 기반, `Script/` 디렉터리 하위에서 UObject/Component/AttributeSet 상속이 가능
 - **AI CoPilot**: UBG — Ultimate Engine CoPilot (BlueprintsLab, FAB) —
   Unreal Editor 내부에서 직접 Claude Code를 실행하며, 본 `.claude/` 설정을 읽습니다
 - **어빌리티 프레임워크**: **GAS 조건부 재활성** — Angelscript의 `UAngelscriptAttributeSet` 래퍼로 C++ 상속 제약 우회 가능. PoC(Plan §6) 통과 시 GAS 정식 재활성, 그전까지는 커스텀 BP 시스템(`UAttributeComponent` / `UAbilityComponent` / `UEffectDataAsset`) 유지.
