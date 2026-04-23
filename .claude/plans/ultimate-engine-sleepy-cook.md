@@ -81,37 +81,73 @@
 
 **본 Plan에서는 실행하지 않음.** 러너북은 리서치 완료 후 선택된 시나리오에 대해서만 실행합니다.
 
-### 3.1 Scenario A — UNREANGEL 바닐라 플러그인 경로
+### 3.1 Scenario A' — UnrealEngine-Angelscript-ZH 플러그인 경로 (선택됨)
+
+**선택 근거:** 리서치 결과 Scenario A(UNREANGEL)는 UE 5.7 미지원, Scenario B(엔진 포크)는
+Hazelight 공식 5.7 브랜치 미공개. 커뮤니티 포크 **UnrealEngine-Angelscript-ZH/AngelscriptProject**
+(UE 5.7, 활발 유지, 2026-04-21 커밋)가 **플러그인 단독 경로**로 두 시나리오 모두를 대체.
+전제: 정책 해석 (a) "사용자 게임 코드에서만 C++ 금지, 플러그인 C++ 빌드는 예외"로 명시화
+(리서치 §8.1 CP2 결정 1 통과 시).
 
 **사전 블로커 체크리스트**
-- [ ] R2, R3 확인 완료
+- [ ] CP2 결정 1 (정책 해석 (a)) 승인 완료
+- [ ] VS 2022 + Windows SDK + .NET SDK 설치 (없으면 별도 Task)
+- [ ] 디스크 여유 ~10 GB (플러그인 빌드 산출물 + Intermediate)
 - [ ] 현재 `.uproject` 백업 (git 커밋)
 - [ ] `git status` 클린
+- [ ] 한글 경로(`C:\Users\김다훈\`) DDC 현 설정 확인 — FileSystem DDC 유지 중
 
 **설치 단계**
-1. UNREANGEL 릴리스에서 UE 5.7 바이너리 플러그인 다운로드 (미지원 시 별도 포팅 Task)
-2. `ProjectFreeHero/Plugins/UnrealAngelscript/`로 압축 해제
-3. `.uproject`의 `Plugins` 배열에 `{"Name": "UnrealAngelscript", "Enabled": true}` 추가
-4. Editor 첫 실행 — 플러그인 로드 로그 확인
-5. `Script/` 디렉터리 생성 (UNREANGEL 기본 경로)
-6. 샘플 `.as` 파일 1개 작성 → hot-reload 확인
+1. 참조 저장소 clone (프로젝트 외부 임시 경로):
+   `git clone https://github.com/UnrealEngine-Angelscript-ZH/AngelscriptProject.git`
+2. `Plugins/Angelscript/` 디렉터리만 프로젝트로 복사 →
+   `ProjectFreeHero/Plugins/Angelscript/`
+3. `ProjectFreeHero.uproject`의 `Plugins` 배열에
+   `{"Name": "Angelscript", "Enabled": true}` 추가
+   (EngineAssociation은 `"5.7"` 유지 — 런처 빌드 그대로)
+4. Editor 첫 실행 → 플러그인 자동 컴파일 **(최초 ~30분 소요)**
+   - 빌드 로그에서 `AngelscriptRuntime`, `AngelscriptCode` 모듈 컴파일 성공 확인
+   - 실패 시 VS/SDK/.NET 버전 재점검 후 롤백
+5. `Script/` 디렉터리 생성 (프로젝트 루트 기준, Angelscript 기본 검색 경로)
+6. 샘플 `Script/Core/HealthComponent.as` 작성 (Plan §6.2 후보 1)
+   → Editor 재시작 없이 hot-reload 동작 확인
+7. BP에서 `UHealthComponent` 참조 가능한지 에디터에서 검증
+8. (선택, R5 후속) `Script/Core/TestAttributeSet.as`로
+   `UAngelscriptAttributeSet` 상속 샘플 작성 — GAS 재활성 기술 전제 확정
 
 **UBG/MCP 영향**
-- `.mcp.json` **수정 없음** (UBG 경로 변경 없음)
-- UBG Python MCP가 Angelscript 인식 여부 R3에서 사전 검증
+- `.mcp.json` **수정 없음** (엔진 포크 아님, UBG 경로 불변)
+- UBG 플러그인과 Angelscript 플러그인의 **동시 로드 안정성 검증 필요** →
+  Plan §6.3 V5–V6 게이트(UBG MCP 5개 도구 응답 + `mcp__unreal-handshake__component`가
+  Angelscript 컴포넌트 인식)로 커버
+- 충돌 발생 시 UBG를 프로젝트 로컬(`Plugins/BpGeneratorUltimate/`)로 이동 고려
 
-**롤백**
-1. `.uproject`에서 `UnrealAngelscript` 항목 제거
-2. `Plugins/UnrealAngelscript/` 삭제
-3. `Script/` 삭제 (Angelscript 전용이면)
-4. DDC 플러시 (선택)
-5. Editor 재시작
+**롤백 (단계별)**
+1. `.uproject`의 `Plugins` 배열에서 `Angelscript` 항목 제거
+2. `Plugins/Angelscript/` 디렉터리 삭제
+3. `Script/` 디렉터리 삭제 (Angelscript 전용이면)
+4. `Binaries/`, `Intermediate/` 플러시 (Editor 종료 상태에서)
+5. DDC 플러시는 **선택** — FileSystem DDC는 프로젝트 외부 경로이므로 보통 불필요
+6. Editor 재시작 → 런처 UE 5.7로 정상 로드 확인
 
-**DDC/경로:** FileSystem DDC 유지. 한글 경로 영향 없음.
+**DDC/경로 (한글 경로 주의):**
+- 현재 `Config/DefaultEngine.ini`의 FileSystem DDC 설정 유지 (Zen DDC는 한글 경로 이슈로 비활성 중 — memory: `project_ue57_ddc_korean_path`)
+- 플러그인 빌드 시 Intermediate는 프로젝트 내부(`Intermediate/Build/`)에 생성 → 한글 경로 영향 없음
+- 만약 빌드 단계에서 인코딩 에러 발생 시 V8(Plan §6.3) 실패로 간주 → 롤백
+
+**성공 기준 (PoC 진입 게이트):**
+- [ ] 첫 빌드 성공 (V1)
+- [ ] `.as` hot-reload 동작 (V2)
+- [ ] BP에서 Angelscript 클래스 참조 가능 (V3–V4)
+- [ ] UBG MCP 정상 응답 (V5–V6)
+- [ ] 한글 경로 빌드 성공 (V8) — Plan §6.3 필수 게이트
 
 ---
 
-### 3.2 Scenario B — Hazelight 공식 엔진 포크 경로
+### ~~3.2 Scenario B — Hazelight 공식 엔진 포크 경로~~ (SUPERSEDED by A')
+
+> **상태:** Scenario A' 채택으로 불필요. Hazelight 공식 UE 5.7 브랜치가 공개 리스트에 없어 R1 확인 불가였고, 150GB+ 디스크 요구 및 UBG 공존 리스크가 있었음. 아래 내용은 **역사적 참조용**으로 보존.
+> 참조: `docs/research/angelscript-ue57-feasibility.md` §7.
 
 **사전 블로커 체크리스트**
 - [ ] R1, R4 확인 완료
