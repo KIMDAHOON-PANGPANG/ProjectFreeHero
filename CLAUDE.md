@@ -6,20 +6,20 @@
 ## 기술 스택
 
 - **엔진**: Unreal Engine 5.7 (2025-11 고정, 문서 검증일 2026-02-13)
-- **언어**: **Blueprint 전용** (C++ 작성 금지 — 본 프로젝트는 BP-only 정책)
+- **언어**: **Blueprint + Angelscript** — 사용자 게임 코드에서 C++ 작성 금지. 플러그인 C++(UBG, Angelscript 런타임)의 빌드는 예외. Angelscript는 `UnrealEngine-Angelscript-ZH/AngelscriptProject` 커뮤니티 플러그인 기반, `Script/` 디렉터리 하위에서 UObject/Component/AttributeSet 상속이 가능
 - **AI CoPilot**: UBG — Ultimate Engine CoPilot (BlueprintsLab, FAB) —
   Unreal Editor 내부에서 직접 Claude Code를 실행하며, 본 `.claude/` 설정을 읽습니다
-- **어빌리티 프레임워크**: **GAS 미사용** — AttributeSet 이 C++ 를 요구하므로 본 프로젝트는
-  커스텀 BP 시스템(`UAttributeComponent` / `UAbilityComponent` / `UEffectDataAsset`) 으로 대체.
+- **어빌리티 프레임워크**: **GAS 조건부 재활성** — Angelscript의 `UAngelscriptAttributeSet` 래퍼로 C++ 상속 제약 우회 가능. PoC(Plan §6) 통과 시 GAS 정식 재활성, 그전까지는 커스텀 BP 시스템(`UAttributeComponent` / `UAbilityComponent` / `UEffectDataAsset`) 유지.
   `FGameplayTag` / `FGameplayTagContainer` 는 BP 지원되므로 태그 의미론은 그대로 활용.
 - **버전 관리**: Git, 트렁크 기반 개발 (origin: GitHub 공개 저장소)
 - **빌드 시스템**: Unreal Build Tool (UBT) / Unreal Automation Tool (UAT)
 - **에셋 파이프라인**: Content/ (Blueprints, meshes, textures) — UE Editor + UBG 경유
 
-> **활성 엔진 스페셜리스트**: `ue-blueprint-specialist` (**주력**, BP 모든 작업 리드),
-> `ue-umg-specialist` (UI), `ue-replication-specialist` (BP 복제),
+> **활성 엔진 스페셜리스트**: `ue-blueprint-specialist` (**주력**, BP 콘텐츠 리드),
+> `ue-angelscript-specialist` (`.as` 시스템 레이어, UObject/Component/AttributeSet 상속),
+> `ue-umg-specialist` (UI), `ue-replication-specialist` (BP + `.as` 복제),
 > `unreal-specialist` (Config / Plugin / Editor 설정 전용).
-> **비활성**: `ue-gas-specialist` (BP-only 정책으로 인해 본 프로젝트 미사용, deprecated).
+> **조건부**: `ue-gas-specialist` — Angelscript PoC(Plan §6) 통과 시 재활성.
 > UBG 플러그인 워크플로는 `.claude/docs/ubg-integration.md` 참조.
 
 ## 프로젝트 구조

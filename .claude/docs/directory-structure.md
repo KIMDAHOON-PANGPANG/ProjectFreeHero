@@ -7,8 +7,14 @@ ProjectFreeHero/
 ├── ProjectFreeHero.uproject     # Unreal 프로젝트 기술자
 ├── Content/                     # UE5 Blueprints, meshes, textures, 에셋 (바이너리)
 ├── Config/                      # UE5 INI 설정 (DefaultGame/Engine/Input/Editor)
-├── Source/                      # ❌ 본 프로젝트 미사용 (BP-only 정책 — 생성 금지)
-├── Plugins/                     # 마켓플레이스 / 로컬 플러그인 (로컬 UBG 포함 가능)
+├── Script/                      # Angelscript 시스템 레이어 (`.as` — BP+Angelscript 정책)
+│   ├── Core/                    # UObject/Component 상속 (HealthComponent 등)
+│   ├── Gameplay/                # 게임플레이 시스템 (어빌리티, 어트리뷰트)
+│   └── UI/                      # Widget helper 로직
+├── Source/                      # ❌ 사용자 C++ 금지 (플러그인 C++는 Plugins/*/Source/ 에 격리)
+├── Plugins/                     # 마켓플레이스 / 로컬 플러그인
+│   ├── Angelscript/             # UnrealEngine-Angelscript-ZH (커뮤니티 UE 5.7 플러그인)
+│   └── BpGeneratorUltimate/     # UBG (로컬 배치 시)
 ├── design/                      # 게임 디자인 문서 (gdd, 내러티브, 레벨, 밸런스)
 ├── docs/                        # 기술 문서 (아키텍처, ADR, 엔진 레퍼런스)
 │   └── engine-reference/unreal/ # UE5.7 고정 API 스냅샷 + PLUGINS.md
@@ -22,12 +28,11 @@ ProjectFreeHero/
 
 ## UE5 특화 참고 사항
 
-- **Blueprint 우선**: 대부분의 게임플레이는 `Content/` 내 `.uasset` 파일에 존재합니다.
-  이 파일들은 바이너리이므로, 텍스트 diff가 아닌 Blueprint diff 도구에 의존하세요.
-- **C++ 금지**: 본 프로젝트는 **BP-only** 정책. `Source/` 는 생성하지 않으며,
-  모든 게임 로직은 `Content/` 내 `.uasset` Blueprint 로 구현합니다.
-  `.claude/rules/` 의 `src/gameplay/**` 경로 스코프 룰은 본 프로젝트에서
-  `Content/Blueprints/Gameplay/**` 로 개념적으로 매핑합니다.
+- **BP + Angelscript 이중 레이어**:
+  - **콘텐츠/튜닝**은 `Content/` 내 `.uasset` Blueprint (바이너리, BP diff 도구 사용)
+  - **시스템 레이어**는 `Script/` 내 `.as` Angelscript (텍스트, 일반 diff/리뷰 가능)
+  - 사용자 C++ 금지. `Source/` 생성 금지. `.claude/rules/` 의 `src/gameplay/**` 룰은
+    본 프로젝트에서 `Content/Blueprints/Gameplay/**` + `Script/Gameplay/**` 로 매핑.
 - **기본 gitignore**: `Binaries/`, `Intermediate/`, `Saved/`,
   `DerivedDataCache/`, `.vs/` — 이미 `.gitignore`에 포함되어 있습니다.
 - **UBG 통합**: Ultimate Engine CoPilot은 Unreal Editor 내부에서 Claude Code를
