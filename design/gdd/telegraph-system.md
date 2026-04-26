@@ -17,6 +17,31 @@
 
 ---
 
+## 1A. Player Fantasy
+
+> **"숙련도 곡선이 즉시 느껴지는 보스전"**
+
+플레이어가 처음 ❗ 신호를 봤을 때:
+- 1단계 (입문): "어 빨간 표시 떴다" → 늦게 가드 → 풀 데미지
+- 2단계 (적응): "표시 뜨면 바로 가드!" → 일반 가드 성공 → 데미지 절반
+- 3단계 (숙련): "표시 끝날 때 정확히 누르기" → Perfect Guard → 무피해 + 반격 ×1.5
+- 4단계 (몰입): "보스 패턴 외워서 ❗ 보지 않고 박자로 패리" → 마스터급 우월감
+
+의도된 감정:
+- **긴장감**: 신호 보는 0.8초 동안 시간이 느려진 것 같은 집중
+- **성취감**: Perfect 가드 + 반격으로 적 HP 30 한 방 깎을 때의 카타르시스
+- **학습 욕구**: 처음엔 못 막다가 점점 막아내는 자기 성장 체감
+- **불안감**: 막 못 하면 큰 피해 → "이 적은 무서워" 학습
+
+**참고 게임**:
+- 다크소울/엘든링: 빨간 광휘 패리 윈도우
+- 인왕 1/2: 가드 → Perfect 가드 → Ki 펄스 카운터 (가장 직접적 영감)
+- 세키로: 일자 가드 + 패리 (Perfect Guard 의 강한 반격 보상 영감)
+
+본 시스템은 **인왕의 Ki 펄스를 단순화** 한 형태로, M1 단계엔 스태미나/Ki 시스템 없이 패리만 검증.
+
+---
+
 ## 2. Detailed Rules
 
 ### 2.1 텔레그래프 사이클 (적 입장)
@@ -109,6 +134,23 @@
 | **AC5** | 플레이어가 마지막 0.15s 윈도우 가드 → `OnPerfectGuard` 발행, 데미지 0 | 로그 `Guard: Perfect`, HP 변동 없음 |
 | **AC6** | Perfect 가드 후 자동 반격 → 적 HP `BaseDamage × 1.5` 감소 | 로그 `Counter: -30 HP` 또는 `Hit: enemy -30 HP` |
 | **AC7** | 모든 Tuning Knobs 가 인스턴스 Details 패널에서 편집 가능 (검색 "Telegraph" / "Guard" 시 카테고리 노출) | 에디터에서 적/플레이어 액터 클릭 → Details 검색 |
+
+---
+
+## 5A. Edge Cases
+
+| 상황 | 처리 | 사유 |
+|---|---|---|
+| 텔레그래프 도중 적이 사망 | `CancelTelegraph()` 호출 → 공격 안 함 | HP 0 인 적의 공격은 시각적 부조리. HealthComponent.OnBecameExecutable 또는 OnDeath 델리게이트 구독 (M1 4.1 항목) |
+| 텔레그래프 도중 같은 적이 다시 `StartTelegraph()` 호출 | **무시** (M1 단순화) | 큐잉 안 함. 디버그 로그 `Telegraph: Already active, ignored` |
+| 가드 시작 전 적 텔레그래프가 이미 끝남 | `OnTelegraphFire` 시점 `bIsGuarding == false` → 풀 데미지 | 정상 동작, "안 막은 것" |
+| 적이 아예 텔레그래프 없는 일반 공격 | TelegraphComponent 미부착이거나 `StartTelegraph` 안 부름 → 가드 무관하게 발사 | M1 졸병은 텔레그래프 없는 빠른 공격 가능 |
+| 플레이어가 가드 누른 채 죽음 | 다음 프레임 GuardComponent 의 `bIsGuarding=false` 초기화 | HealthComponent.IsDead() 체크 |
+| 여러 적이 동시에 텔레그래프 시작 | 각 인스턴스 독립 (= 5.x 토큰 시스템에서 동시 공격자 1명 제한 부여) | M1 단계엔 제한 없음 |
+| 공중 점프 중 가드 | 가드 자체는 가능 (스태미나 X). Perfect 윈도우 동일 적용 | 추후 공중 가드 모션 별도 |
+| 후방에서 받는 공격 | 본 시스템 미적용 (방향 판정 M1 out of scope). 풀 데미지 | M2+ 에 가드 방향 추가 |
+| 텔레그래프 카운트다운 중 게임 일시정지 | TimeDilation=0 시 자동 정지, 재개 시 이어짐 | UE 표준 Timer 동작 |
+| `TelegraphDuration` 음수/0 입력 | `SetMaxHealth` 패턴처럼 early return + warning 로그 | 디자이너 실수 방지 |
 
 ---
 

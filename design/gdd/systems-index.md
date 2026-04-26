@@ -50,7 +50,7 @@
 
 ## 1. Phase 0 — Foundation (P0 시스템, 수직 슬라이스 필수)
 
-> 프리플로우 코어가 돌아가기 위해 **반드시 먼저 잠겨야** 하는 6개 시스템.
+> 프리플로우 코어가 돌아가기 위해 **반드시 먼저 잠겨야** 하는 7개 시스템 (#7 은 M1 마일스톤 추가분).
 > 모두 `ue-blueprint-specialist` 가 구현을 담당하며, 복제는 단일 플레이어 스코프이므로 불필요.
 
 | # | Slug (파일명) | 시스템명 | 원문 § | BP 대체 / 구현 힌트 | 핵심 에이전트 | Priority | Status |
@@ -61,8 +61,9 @@
 | 4 | `hit-reaction.md` | 히트 리액션 & 히트스톱 | §5.4 | `BP_HitReactionComponent` + 글로벌 슬로우모(Custom Time Dilation) + Camera Shake | `ue-blueprint-specialist`, `technical-artist` | P0 | — |
 | 5 | `group-token-ai.md` | 그룹 토큰 매니저 (군중 AI) | §5.5 | `BP_GroupTokenSubsystem` (WorldSubsystem) — 공격 토큰 N개 풀, 적 AI 가 토큰 요청/반환 | `ue-blueprint-specialist`, `ai-programmer` | P0 | — |
 | 6 | `game-feel-layer.md` | 게임 필 레이어 (프리플로우 피드백) | §5.6 | `BP_GameFeelSubsystem` — 히트 프리즈, 카메라 셰이크, Chromatic Aberration PostProcess, SFX/VFX 큐 | `ue-blueprint-specialist`, `sound-designer`, `technical-artist` | P0 | — |
+| 7 | `telegraph-system.md` | 텔레그래프 / 가드 / 반격 | M1 §3 (마일스톤 추가) | `UTelegraphComponent` + `UGuardComponent` (Angelscript). EditAnywhere 튜닝 6개 (Duration 0.8s / PerfectWindow 0.15s / CounterMul 1.5x / GuardReduction 0.5 / 2 UI bool). 인왕 Ki 펄스 단순화. | `ue-angelscript-specialist`, `systems-designer` | P0 | Draft |
 
-**Phase 0 게이트:** 위 6개 모두 `Locked` → 수직 슬라이스 프로토타입 착수 가능.
+**Phase 0 게이트:** 위 7개 모두 `Locked` → 수직 슬라이스 프로토타입 착수 가능.
 
 ---
 
