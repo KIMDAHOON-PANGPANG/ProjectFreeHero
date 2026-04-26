@@ -18,6 +18,22 @@ class UHealthComponent : UActorComponent
     UPROPERTY(Category = "Health")
     float CurrentHealth = 100.0f;
 
+    /**
+     * MaxHealth 를 NewMax 로 재설정하고 CurrentHealth 도 동일 값으로 만들어
+     * "풀 HP 로 시작" 시키는 헬퍼. BP BeginPlay 에서 인스턴스별 HP override 용.
+     * (Angelscript 는 static 미지원 — instance method. BP 에서 호출 시
+     *  Get HealthComponent → SetMaxHealth.Target 에 명시적 연결 필요.)
+     */
+    UFUNCTION(BlueprintCallable, Category = "Health")
+    void SetMaxHealth(float NewMax)
+    {
+        if (NewMax <= 0.0f)
+            return;
+
+        MaxHealth = NewMax;
+        CurrentHealth = NewMax;
+    }
+
     UFUNCTION(BlueprintCallable, Category = "Health")
     void ApplyDamage(float DamageAmount)
     {
